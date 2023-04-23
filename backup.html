@@ -1,0 +1,549 @@
+<?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header('location: login_new.php');
+}
+if (isset($_POST['logout_btn'])) {
+
+    unset($_SESSION['user']);
+    session_destroy();
+    header('location: login_new.php');
+}
+
+?>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+
+
+    <!-- <link rel="stylesheet" href=".style1.css"> -->
+
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/animate.css">
+    <style>
+        .comment_class {
+
+            width: 100%;
+            height: 300px;
+            background-color: white;
+            padding: 10px;
+            overflow: hidden;
+            overflow-y: scroll;
+        }
+
+        /* Google Font CDN Link */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* body{
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dad3f8;
+} */
+        ::selection {
+            background: #6d50e2;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 950px;
+            width: 100%;
+            padding: 40px 50px 40px 40px;
+            background: #fff;
+            margin: 0 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .container .topic {
+            font-size: 30px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content .list {
+            display: flex;
+            flex-direction: column;
+            width: 20%;
+            margin-right: 50px;
+            position: relative;
+        }
+
+        .content .list label {
+            height: 60px;
+            font-size: 22px;
+            font-weight: 500;
+            line-height: 60px;
+            cursor: pointer;
+            padding-left: 25px;
+            transition: all 0.5s ease;
+            color: #333;
+            z-index: 12;
+        }
+
+        #home:checked~.list label.home,
+        #blog:checked~.list label.blog,
+        #help:checked~.list label.help,
+        #code:checked~.list label.code,
+        #about:checked~.list label.about {
+            color: #fff;
+        }
+
+        .content .list label:hover {
+            color: #6d50e2;
+        }
+
+        .content .slider {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 60px;
+            width: 100%;
+            border-radius: 12px;
+            background: #6d50e2;
+            transition: all 0.4s ease;
+        }
+
+        #home:checked~.list .slider {
+            top: 0;
+        }
+
+        #blog:checked~.list .slider {
+            top: 60px;
+        }
+
+        #help:checked~.list .slider {
+            top: 120px;
+        }
+
+        #code:checked~.list .slider {
+            top: 180px;
+        }
+
+        #about:checked~.list .slider {
+            top: 240px;
+        }
+
+        .content .text-content {
+            width: 80%;
+            height: 100%;
+        }
+
+        .content .text {
+            display: none;
+        }
+
+        .content .text .title {
+            font-size: 25px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .content .text p {
+            text-align: justify;
+        }
+
+        .content .text-content .home {
+            display: block;
+        }
+
+        #home:checked~.text-content .home,
+        #blog:checked~.text-content .blog,
+        #help:checked~.text-content .help,
+        #code:checked~.text-content .code,
+        #about:checked~.text-content .about {
+            display: block;
+        }
+
+        #blog:checked~.text-content .home,
+        #help:checked~.text-content .home,
+        #code:checked~.text-content .home,
+        #about:checked~.text-content .home {
+            display: none;
+        }
+
+        .content input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="20">
+
+    <!-- navbar -->
+    <nav class="navbar sticky-top  navbar-expand-md navbar-light pt-5 pb-4 bg-dark">
+        <div class="container-xxl">
+            <!-- navbar brand / title -->
+            <a class="navbar-brand" href="#intro">
+                <span class="text-secondary fw-bold">
+                    TMS
+                </span>
+            </a>
+            <!-- toggle button for mobile nav -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
+                aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- navbar links -->
+            <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#topics">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link  text-white" href="#reviews">Destinations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#contact">Hotels</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#pricing">Resorts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#pricing">Shops</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="Sign_up.php">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="login_new.php">Login</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Profile
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">
+                                    <?php echo $_SESSION['user']; ?>
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li class=""><a href="logout.php">Logout</a></li>
+
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <?php include('index2.php'); ?>
+
+    <?php include('Connection.php'); ?>
+    <div>
+
+        <p>Hello World</p>
+        <div class="container">
+            <div class="topic">CSS Vertical Tabs.</div>
+            <div class="content">
+                <input type="radio" name="slider" checked id="home">
+                <input type="radio" name="slider" id="blog">
+                <input type="radio" name="slider" id="help">
+                <input type="radio" name="slider" id="code">
+                <input type="radio" name="slider" id="about">
+                <div class="list">
+                    <label for="home" class="home">
+                        <i class="fas fa-home"></i>
+                        <span class="title">Destinations</span>
+                    </label>
+                    <label for="blog" class="blog">
+                        <span class="icon"><i class="fas fa-blog"></i></span>
+                        <span class="title">Hotels</span>
+                    </label>
+                    <label for="help" class="help">
+                        <span class="icon"><i class="far fa-envelope"></i></span>
+                        <span class="title">Shops</span>
+                    </label>
+                    <label for="code" class="code">
+                        <span class="icon"><i class="fas fa-code"></i></span>
+                        <span class="title">Restaurants</span>
+                    </label>
+                    <label for="about" class="about">
+                        <span class="icon"><i class="far fa-user"></i></span>
+                        <span class="title">About</span>
+                    </label>
+                    <div class="slider"></div>
+                </div>
+                <?php
+
+                include('databases/database.php');
+                // this is used to write query for all data
+                $sql1 = "SELECT * FROM destination_home_page";
+
+                $sql2 = "SELECT * FROM hotels_home_page";
+
+                $sql3 = "SELECT * FROM resort_home_page";
+
+
+                // this is used to make theery and get the result
+                $result1 = mysqli_query($connect, $sql1);
+                $result2 = mysqli_query($connect, $sql2);
+                $result3 = mysqli_query($connect, $sql3);
+
+                // this is used to fetch the resuting rows as an array
+                $destinations = mysqli_fetch_all($result1, MYSQLI_ASSOC);
+                $hotels = mysqli_fetch_all($result2, MYSQLI_ASSOC);
+                $resorts = mysqli_fetch_all($result3, MYSQLI_ASSOC);
+                ?>
+                <div class="text-content">
+                    <div class="home text comment_class">
+                        <div class="title text-center fw-bold bg-secondary">Destinations in Ethiopia</div>
+                        <div class="container">
+                            <?php foreach ($destinations as $destination) { ?>
+
+                                <div class="row m-10">
+                                    <div class="col-6 ">
+                                        <?php echo '<img class = "img-fluid" style = "width: 300; height: 150;" src="data:image;base64,' . base64_encode($destination['destination_image']) . '">'; ?>
+
+                                    </div>
+                                    <br>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <?php echo $destination['destination_name']; ?>
+                                        </div>
+                                        <div class="row">
+                                            <?php echo $destination['destination_description']; ?>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            <?php } ?>
+
+                        </div>
+
+                    </div>
+                    <div class="blog text comment_class">
+                        <div class="title">Hotels Section</div>
+
+                        <?php
+
+                        $hotel_destination = "Lalibella";
+                        $sql4 = "SELECT * FROM hotels_home_page WHERE hotel_destinations =   '$hotel_destination'";
+                        $result4 = mysqli_query($connect, $sql4);
+                        $hotels = mysqli_fetch_all($result4, MYSQLI_ASSOC)
+
+
+
+                            ?>
+                        <div class="container">
+                            <p>
+                                <?php echo $hotel_destination; ?>
+                            </p>
+                            <?php foreach ($hotels as $hotel) { ?>
+
+                                <div class="row m-10">
+
+                                    <div class="col-5 ">
+                                        <?php echo '<img class = "img-fluid" style = "width: 300; height: 150;" src="data:image;base64,' . base64_encode($hotel['hotel_image']) . '">'; ?>
+
+                                    </div>
+                                    <br>
+                                    <div class="col-7">
+                                        <div class="row">
+                                            <?php echo $hotel['hotel_name']; ?>
+                                        </div>
+                                        <div class="row">
+                                            <?php echo $hotel['hotel_description']; ?>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            <?php } ?>
+
+                        </div>
+
+                        <?php
+
+                        $hotel_destination = "Gonder";
+                        $sql4 = "SELECT * FROM hotels_home_page WHERE hotel_destinations =   '$hotel_destination'";
+                        $result4 = mysqli_query($connect, $sql4);
+                        $hotels = mysqli_fetch_all($result4, MYSQLI_ASSOC)
+
+
+
+                            ?>
+                        <div class="container">
+                            <p>
+                                <?php echo $hotel_destination; ?>
+                            </p>
+                            <?php foreach ($hotels as $hotel) { ?>
+
+                                <div class="row m-10">
+
+                                    <div class="col-5 ">
+                                        <?php echo '<img class = "img-fluid" style = "width: 300; height: 150;" src="data:image;base64,' . base64_encode($hotel['hotel_image']) . '">'; ?>
+
+                                    </div>
+                                    <br>
+                                    <div class="col-7">
+                                        <div class="row">
+                                            <?php echo $hotel['hotel_name']; ?>
+                                        </div>
+                                        <div class="row">
+                                            <?php echo $hotel['hotel_description']; ?>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            <?php } ?>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+                <div class="help text comment_class">
+                    <div class="title">Hotels Section</div>
+
+                    <?php
+
+                    $hotel_destination = "Lalibella";
+                    $sql4 = "SELECT * FROM hotels_home_page WHERE hotel_destinations =   '$hotel_destination'";
+                    $result4 = mysqli_query($connect, $sql4);
+                    $hotels = mysqli_fetch_all($result4, MYSQLI_ASSOC)
+
+
+
+                        ?>
+                    <div class="container">
+                        <p>
+                            <?php echo $hotel_destination; ?>
+                        </p>
+                        <?php foreach ($hotels as $hotel) { ?>
+
+                            <div class="row m-10">
+
+                                <div class="col-5 ">
+                                    <?php echo '<img class = "img-fluid" style = "width: 300; height: 150;" src="data:image;base64,' . base64_encode($hotel['hotel_image']) . '">'; ?>
+
+                                </div>
+                                <br>
+                                <div class="col-7">
+                                    <div class="row">
+                                        <?php echo $hotel['hotel_name']; ?>
+                                    </div>
+                                    <div class="row">
+                                        <?php echo $hotel['hotel_description']; ?>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        <?php } ?>
+
+                    </div>
+
+                    <?php
+
+                    $hotel_destination = "Gonder";
+                    $sql4 = "SELECT * FROM hotels_home_page WHERE hotel_destinations =   '$hotel_destination'";
+                    $result4 = mysqli_query($connect, $sql4);
+                    $hotels = mysqli_fetch_all($result4, MYSQLI_ASSOC)
+
+
+
+                        ?>
+                    <div class="container">
+                        <p>
+                            <?php echo $hotel_destination; ?>
+                        </p>
+                        <?php foreach ($hotels as $hotel) { ?>
+
+                            <div class="row m-10">
+
+                                <div class="col-5 ">
+                                    <?php echo '<img class = "img-fluid" style = "width: 300; height: 150;" src="data:image;base64,' . base64_encode($hotel['hotel_image']) . '">'; ?>
+
+                                </div>
+                                <br>
+                                <div class="col-7">
+                                    <div class="row">
+                                        <?php echo $hotel['hotel_name']; ?>
+                                    </div>
+                                    <div class="row">
+                                        <?php echo $hotel['hotel_description']; ?>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        <?php } ?>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="code text">
+                <div class="title">Code Content</div>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore magnam vitae inventore
+                    blanditiis nam tenetur voluptates doloribus error atque reprehenderit, necessitatibus minima
+                    incidunt a eius corrupti placeat, quasi similique deserunt, harum? Quia ut impedit ab earum
+                    expedita soluta repellat perferendis hic tempora inventore, accusantium porro consequuntur
+                    quisquam et assumenda distinctio dignissimos doloremque enim nemo delectus deserunt! Ullam
+                    perspiciatis quae aliquid animi quam amet deleniti, at dolorum tenetur, tempore laborum.</p>
+            </div>
+            <div class="about text">
+                <div class="title">About Content</div>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus incidunt possimus
+                    quas ad, sit nam veniam illo ullam sapiente, aspernatur fugiat atque. Laboriosam libero
+                    voluptatum molestiae veniam earum quisquam, laudantium aperiam, eligendi dicta animi maxime
+                    sunt non nisi, ex, ipsa! Soluta ex, quibusdam voluptatem distinctio asperiores recusandae
+                    veritatis optio dolorem illo nesciunt quos ullam, dicta numquam ipsam cumque sed. Blanditiis
+                    omnis placeat, enim sit dicta eligendi voluptatibus laborum consectetur repudiandae tempora
+                    numquam molestiae rerum mollitia nemo. Velit perspiciatis, nesciunt, quo illo quas error
+                    debitis molestiae et sapiente neque tempore natus?</p>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+
+</body>
+<!-- <footer>
+  <h2>this is the footer tag</h2>
+</footer> -->
+
+</html>

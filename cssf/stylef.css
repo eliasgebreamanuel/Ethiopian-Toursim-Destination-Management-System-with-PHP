@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@300;400;600;700&display=swap');
+
+body{
+    font-family: "Exo",sans-serif;
+}
+.list-group-item{
+    background-color: rgb(0,90,255);
+    color:#fff;
+    border:none;
+    margin:3px 0px;
+    text-align: center;
+    box-shadow:0 4px 4px rgb(0 0 0/25%);
+}
+.list-group-item.active{
+    background-color: #fff !important;
+    color:rgb(0,90,255) !important;
+}
+.scrollspy-example{
+    height:225px;
+    overflow-y: scroll;
+}
+.scrollspy-example::-webkit-scrollbar{
+    width:10px;
+}
+.scrollspy-example::-webkit-scrollbar-track{
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-border-radius:4px;
+    border-radius: 1px;
+}
+.scrollspy-example::-webkit-scrollbar-thumb{
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.5);
+    -webkit-border-radius:1px;
+    background: rgb(0,90,255);
+    border-radius: 4px;
+}
+h4{
+    font-weight: 700;
+    color:rgb(0,90,255);
+    font-size:18px;
+    text-align: center;
+}
+.list-group a img{
+    width:150px;
+}
+.tag{
+    width:100px;
+    height:100px;
+    background: rgb(255,33,146);
+    position: absolute;
+    top:128px;
+    left:72px;
+    border-radius: 50%;
+}
+.mycontainer{
+    height:80vh;
+    display:flex;
+    justify-items: center;
+    align-items: center;
+}
+.myrow{
+    width:100%;
+    height:50vh;
+    border-radius:10px;
+    backdrop-filter: blur(10px);
+    justify-items: center;
+    align-items: center;
+}
